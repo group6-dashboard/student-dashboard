@@ -1,39 +1,39 @@
+@config "../../tailwind.config.ts";
 @import "tailwindcss";
 
 /* ========== Design Tokens (Light) ========== */
 :root {
   /* surfaces */
-  --background: 210 40% 98%;       /* page bg: soft gray-white */
-  --foreground: 222 47% 11%;       /* text: slate-900-ish */
+  --background: 220 20% 98%;
+  --foreground: 222 47% 11%;
 
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
 
-  --muted: 210 40% 96%;
+  --muted: 220 18% 95%;
   --muted-foreground: 215 16% 47%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
 
   /* borders / focus */
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 221 83% 53%;             /* focus ring: clean blue */
+  --border: 220 14% 88%;
+  --input: 220 14% 88%;
+  --ring: 221 83% 53%;
 
   /* brand */
-  --primary: 221 83% 53%;          /* blue-600 vibe */
+  --primary: 221 83% 53%;
   --primary-foreground: 210 40% 98%;
 
-  --secondary: 210 40% 96%;
+  --secondary: 220 18% 95%;
   --secondary-foreground: 222 47% 11%;
 
-  --accent: 214 32% 94%;           /* subtle blue-gray */
+  --accent: 220 18% 94%;
   --accent-foreground: 222 47% 11%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
 
-  /* misc */
   --radius: 12px;
 }
 
