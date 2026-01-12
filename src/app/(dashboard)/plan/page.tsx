@@ -1,3 +1,3 @@
-export default function TimePage() {
-  return <h1>Time</h1>;
+export default function StudyPlanPage() {
+  return <h1>Study Plan</h1>;
 }
