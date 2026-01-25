@@ -1,147 +1,256 @@
-"use client";
+'use client';
 
-import React from "react";
+import { useState, useEffect } from 'react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Download, Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-export default function SchedulePage() {
+export interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  endTime?: string;
+  color: string;
+  type: string;
+  attendees?: string[];
+}
+
+const mockEvents: Event[] = [
+  {
+    id: '1',
+    title: 'Meeting',
+    date: '2022-05-23',
+    time: '9:00AM',
+    endTime: '10:00AM',
+    color: 'bg-orange-100 border-orange-200',
+    type: 'InterScheduled',
+    attendees: ['user1', 'user2']
+  },
+  {
+    id: '2',
+    title: 'Product Live',
+    date: '2022-05-23',
+    time: '11:00',
+    endTime: '8:30AM',
+    color: 'bg-purple-100 border-purple-200',
+    type: 'Event',
+    attendees: ['user1', 'user2']
+  },
+  {
+    id: '3',
+    title: 'Event',
+    date: '2022-05-24',
+    time: '10:00AM',
+    color: 'bg-green-100 border-green-200',
+    type: 'Event'
+  },
+  {
+    id: '4',
+    title: 'Client Visit',
+    date: '2022-05-25',
+    time: '9:30AM',
+    color: 'bg-pink-100 border-pink-200',
+    type: 'Event'
+  },
+  {
+    id: '5',
+    title: 'New Product Demo',
+    date: '2022-05-26',
+    time: '9:30',
+    endTime: '9:30AM',
+    color: 'bg-cyan-100 border-cyan-200',
+    type: 'InterScheduled',
+    attendees: ['user1', 'user2', 'user3', 'user4']
+  },
+  {
+    id: '6',
+    title: 'Employee Event',
+    date: '2022-05-28',
+    time: '10:00',
+    endTime: '10:30AM',
+    color: 'bg-yellow-100 border-yellow-200',
+    type: 'InterScheduled',
+    attendees: ['user1', 'user2']
+  },
+  {
+    id: '7',
+    title: 'Client Visit',
+    date: '2022-05-28',
+    time: '9:30AM',
+    color: 'bg-pink-100 border-pink-200',
+    type: 'Event'
+  },
+  {
+    id: '8',
+    title: 'Installation',
+    date: '2022-05-29',
+    time: '9:30AM',
+    color: 'bg-gray-100 border-gray-200',
+    type: 'Event'
+  }
+];
+
+export default function CalendarPage() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [currentDate, setCurrentDate] = useState(new Date(2022, 4, 1));
+  const [viewMode, setViewMode] = useState<'Daily' | 'Weekly' | 'Monthly' | 'Yearly'>('Weekly');
+  const [selectedCategory, setSelectedCategory] = useState('Category');
+
+  useEffect(() => {
+    const savedEvents = localStorage.getItem('calendar-events');
+    if (savedEvents) {
+      setEvents(JSON.parse(savedEvents));
+    } else {
+      setEvents(mockEvents);
+      localStorage.setItem('calendar-events', JSON.stringify(mockEvents));
+    }
+  }, []);
+
+  const weekDays = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+  const currentWeekDates = [23, 24, 25, 26, 27, 28, 29];
+
+  const getEventsForDate = (day: number) => {
+    const dateStr = `2022-05-${day.toString().padStart(2, '0')}`;
+    return events.filter(event => event.date === dateStr);
+  };
+
+  const handleExport = () => {
+    const dataStr = JSON.stringify(events, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'calendar-events.json';
+    link.click();
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const importedEvents = JSON.parse(event.target?.result as string);
+          setEvents(importedEvents);
+          localStorage.setItem('calendar-events', JSON.stringify(importedEvents));
+        } catch (error) {
+          console.error('Error importing events:', error);
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
   return (
-    <div className="flex flex-col md:flex-row justify-center items-start p-6 gap-6 bg-gray-50 min-h-screen">
-      {/* Main Content */}
-      <div className="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6">
-        {/* Top Bar */}
-        <div className="flex flex-wrap items-center justify-between mb-6 gap-3">
-          
-
-          <div className="flex items-center gap-3">
-            <div className="text-sm font-semibold text-gray-700">
-              08:50:19 PM
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex">
+        {/* Main Calendar Area */}
+        <div className="flex-1 p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span>Home</span>
+              <span>/</span>
+              <span>Events</span>
+              <span>/</span>
+              <span className="text-gray-900 font-medium">Calendar</span>
             </div>
-            <input
-              type="text"
-              placeholder="Search events..."
-              className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-            />
-            <select className="border border-gray-300 rounded-lg px-2 py-1 text-sm">
-              <option>All Types</option>
-            </select>
-            <select className="border border-gray-300 rounded-lg px-2 py-1 text-sm">
-              <option>All Priorities</option>
-            </select>
-            <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-300">
-              Import
-            </button>
-            <button className="bg-pink-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-pink-600">
-              Export
-            </button>
-          </div>
-        </div>
-
-        {/* Header Month */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">JANUARY 2026</h2>
-          <button className="bg-white border border-gray-300 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 text-sm font-semibold">
-            + New Schedule
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg p-3 mb-4 items-center justify-between">
-          <div className="flex gap-4">
-            <button className="bg-white text-purple-600 font-semibold px-3 py-1 rounded">
-              Daily
-            </button>
-            <button className="bg-purple-700 text-white px-3 py-1 rounded font-semibold">
-              Weekly
-            </button>
-            <button className="bg-white text-purple-600 px-3 py-1 rounded font-semibold">
-              Monthly
-            </button>
-            <button className="bg-white text-purple-600 px-3 py-1 rounded font-semibold">
-              Agenda
-            </button>
-          </div>
-          <div className="flex gap-3">
-            {["12", "13", "14", "15", "16", "17", "18"].map((d, i) => (
-              <div
-                key={i}
-                className={`w-10 h-10 flex items-center justify-center rounded-full font-semibold ${d === "18"
-                    ? "bg-yellow-300 text-purple-800"
-                    : "bg-purple-400 text-white"
-                  }`}
+            <div className="flex items-center gap-2">
+              <label htmlFor="import-file">
+                <Button variant="outline" className="flex items-center gap-2" asChild>
+                  <span className="cursor-pointer">
+                    <Upload className="w-4 h-4" />
+                    Import
+                  </span>
+                </Button>
+              </label>
+              <input
+                id="import-file"
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={handleImport}
+              />
+              <Button
+                variant="default"
+                className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600"
+                onClick={handleExport}
               >
-                {d}
-              </div>
-            ))}
+                <Download className="w-4 h-4" />
+                Export
+              </Button>
+              <select
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option>Category</option>
+                <option>Work</option>
+                <option>Personal</option>
+                <option>Meeting</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-          {[
-            { title: "Meeting", date: "23 May", color: "bg-yellow-100" },
-            { title: "Event", date: "24 May", color: "bg-green-100" },
-            { title: "Client Visit", date: "25 May", color: "bg-pink-100" },
-            { title: "Product Demo", date: "26 May", color: "bg-blue-100" },
-            { title: "Employee Event", date: "28 May", color: "bg-yellow-100" },
-            { title: "Installation", date: "29 May", color: "bg-gray-100" },
-            { title: "Product Discussion", date: "30 May", color: "bg-purple-100" },
-          ].map((event, i) => (
-            <div
-              key={i}
-              className={`${event.color} p-3 rounded-lg shadow-sm border border-gray-200`}
-            >
-              <h4 className="font-semibold text-gray-800">{event.title}</h4>
-              <p className="text-xs text-gray-500">{event.date} 2026</p>
-              <p className="text-xs mt-1 text-gray-700">9:00 AM - 10:00 AM</p>
-              <div className="flex mt-2 gap-1">
-                <div className="w-4 h-4 bg-pink-400 rounded-full"></div>
-                <div className="w-4 h-4 bg-blue-400 rounded-full"></div>
-                <div className="w-4 h-4 bg-yellow-400 rounded-full"></div>
+          {/* Calendar Header */}
+          <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-purple-600 rounded-t-2xl p-6 text-white">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <h1 className="text-2xl font-bold">MAY 2022</h1>
+                <span className="px-4 py-1 bg-white/20 rounded-full text-sm">
+                  New Schedule
+                </span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/10 rounded-lg p-1">
+                {(['Daily', 'Weekly', 'Monthly', 'Yearly'] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === mode
+                        ? 'bg-white text-purple-600'
+                        : 'text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Sidebar Calendar */}
-      <div className="w-full md:w-72 bg-white rounded-xl shadow p-5 h-fit">
-        <div className="bg-gradient-to-r from-pink-500 to-purple-500 text-white p-4 rounded-lg mb-4">
-          <h3 className="text-center text-lg font-semibold mb-3">
-            January 2026
-          </h3>
-          <div className="grid grid-cols-7 text-center text-sm gap-1">
-            {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
-              <span key={d} className="font-bold">
-                {d}
-              </span>
-            ))}
-            {[...Array(31)].map((_, i) => (
-              <div
-                key={i}
-                className={`py-1 rounded-full ${i + 1 === 18
-                    ? "bg-yellow-300 text-purple-700 font-bold"
-                    : "hover:bg-white/30"
-                  }`}
-              >
-                {i + 1}
-              </div>
-            ))}
+            {/* Week Days Header */}
+            <div className="grid grid-cols-7 gap-4">
+              {weekDays.map((day, index) => (
+                <div key={day} className="text-center">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-white/20 flex items-center justify-center mb-2 font-bold">
+                    {currentWeekDates[index]}
+                  </div>
+                  <div className="text-xs font-medium">{day}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex justify-center gap-2 mt-3">
-            <button className="bg-white text-purple-600 px-2 py-1 rounded text-xs font-semibold">
-              Day
-            </button>
-            <button className="bg-white text-purple-600 px-2 py-1 rounded text-xs font-semibold">
-              Month
-            </button>
-            <button className="bg-white text-purple-600 px-2 py-1 rounded text-xs font-semibold">
-              Year
-            </button>
+
+          {/* Calendar Grid */}
+          <div className="bg-white rounded-b-2xl shadow-sm">
+            <div className="grid grid-cols-7 gap-px bg-gray-200">
+              {currentWeekDates.map((day) => {
+                const dayEvents = getEventsForDate(day);
+                return (
+                  <div
+                    key={day}
+                    className="bg-white p-3 min-h-[400px]"
+                  >
+
+
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        <div className="bg-gray-100 rounded-lg p-4 text-center font-semibold text-gray-700">
-          MEETING
-        </div>
+        
       </div>
     </div>
   );
