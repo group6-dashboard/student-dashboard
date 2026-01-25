@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Download, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import EventCard from '@/components/EventCard';
 
 export interface Event {
   id: string;
@@ -241,8 +242,9 @@ export default function CalendarPage() {
                     key={day}
                     className="bg-white p-3 min-h-[400px]"
                   >
-
-
+                    {dayEvents.map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
                   </div>
                 );
               })}
