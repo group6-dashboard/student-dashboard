@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Download, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EventCard from '@/components/EventCard';
+import MiniCalendar from '@/components/MiniCalendar';
 
 export interface Event {
   id: string;
@@ -251,8 +252,10 @@ export default function CalendarPage() {
             </div>
           </div>
         </div>
-
-        
+         {/* Right Sidebar */}
+        { <div className="w-80 bg-white border-l border-gray-200 p-6 space-y-6">
+          <MiniCalendar currentDate={currentDate} />
+        </div>}
       </div>
     </div>
   );
