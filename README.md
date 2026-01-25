@@ -84,7 +84,8 @@ The prototype demonstrates:
 ### Styling & Design
 
 * Design-token–based theming using **CSS variables**
-* Reusable UI components (e.g. `Card`, `AppShell`)
+* Reusable UI components and basic UI primitives are used to ensure consistent styling across pages.
+
 * Dashboard UI inspired by **Notion / Linear / Vercel**
 
 ---
