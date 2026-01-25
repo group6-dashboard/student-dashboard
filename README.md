@@ -14,8 +14,8 @@ A web-based **Student Dashboard prototype** designed to help university students
 * **Team members:**
 
   * *Yiling Chen: Architecture & Home Overview*
-  * *Natsuki Mine: Schedule*
-  * *Afsaneh Heidari: Academic Analytics*
+  * *Natsuki Mine: Academic Analytics*
+  * *Afsaneh Heidari: Schedule*
   * *Pengfei Li: Student Budget*
   * *Congying Zhao: Study Plan Generator*
   
