@@ -5,6 +5,7 @@ import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Download, Upload }
 import { Button } from '@/components/ui/button';
 import EventCard from '@/components/EventCard';
 import MiniCalendar from '@/components/MiniCalendar';
+import UpcomingEvents from '@/components/UpcomingEvents';
 
 export interface Event {
   id: string;
@@ -255,6 +256,7 @@ export default function CalendarPage() {
          {/* Right Sidebar */}
         { <div className="w-80 bg-white border-l border-gray-200 p-6 space-y-6">
           <MiniCalendar currentDate={currentDate} />
+          <UpcomingEvents events={events} />
         </div>}
       </div>
     </div>
