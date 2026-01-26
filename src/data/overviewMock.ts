@@ -60,8 +60,8 @@ export const overviewMock: OverviewMock = {
     total: 240,
   },
   budget: {
-    spent: 245,
-    total: 400,
+    spent: 350,
+    total: 500,
   },
   focusTasks: [
     { id: "task-1", title: "Finish dashboard layout", done: true },
