@@ -97,7 +97,7 @@ export default function TaskCreateModal({
       <div className="relative w-[92%] max-w-xl">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-2">
-            <CardTitle>Add Task</CardTitle>
+            <CardTitle className="text-xl font-bold">Add Task</CardTitle>
             <Button variant="ghost" size="sm" onClick={onClose}>
               ✕
             </Button>
