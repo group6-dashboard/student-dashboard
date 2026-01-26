@@ -14,7 +14,7 @@ export default function WeeklyView({ result }: { result: PlanResult }) {
         <CardContent className="pt-5">
           {weeklyCapacity != null && (
             <div className="mb-3 text-sm text-muted-foreground">
-              Capacity:{" "}
+              Assumed weekly available study time:{" "}
               <span className="font-medium text-foreground">
                 {weeklyCapacity}h
               </span>{" "}
@@ -23,7 +23,7 @@ export default function WeeklyView({ result }: { result: PlanResult }) {
           )}
 
           <div className="overflow-x-hidden">
-            <table className="w-full text-sm table-fixed">
+            <table className="w-full text-sm">
               <thead>
                 <tr className="text-muted-foreground">
                   <th className="text-left font-medium py-2 pr-3 w-[160px]">
@@ -55,15 +55,23 @@ export default function WeeklyView({ result }: { result: PlanResult }) {
                             <Text variant="muted">—</Text>
                           ) : (
                             w.rows.map((r, idx) => (
-                              <div
-                                key={idx}
-                                className="flex items-center gap-2"
-                              >
-                                <Badge>{r.type}</Badge>
-                                <span className="truncate">{r.title}</span>
-                                <span className="text-muted-foreground">
-                                  {r.hours}h
-                                </span>
+                              <div key={idx} className="min-w-0">
+                                {/* small screen */}
+                                <div className="flex items-center justify-between gap-2 md:hidden">
+                                  <span className="truncate">{r.title}</span>
+                                  <span className="text-muted-foreground whitespace-nowrap">
+                                    {r.hours}h
+                                  </span>
+                                </div>
+
+                                {/* large screen */}
+                                <div className="hidden md:flex items-center gap-2 min-w-0">
+                                  <Badge>{r.type}</Badge>
+                                  <span className="truncate">{r.title}</span>
+                                  <span className="ml-auto text-muted-foreground whitespace-nowrap">
+                                    {r.hours}h
+                                  </span>
+                                </div>
                               </div>
                             ))
                           )}

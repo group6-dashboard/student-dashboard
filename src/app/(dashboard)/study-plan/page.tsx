@@ -66,11 +66,16 @@ export default function StudyPlanGenerator() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Text as="h1" variant="h2" className="font-semibold">
+    <div className="space-y-6">
+      {/* PAGE HEADER */}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">
           Study Plan Generator
-        </Text>
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Plan your weekly study schedule based on tasks, deadlines, and
+          available time.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -99,7 +104,7 @@ export default function StudyPlanGenerator() {
               ) : (
                 <div className="text-sm text-muted-foreground">
                   <p>
-                    This summary view is designed as a set of weekly donut
+                    This summary view will be designed as a set of weekly donut
                     charts.{" "}
                   </p>
                   <br />
