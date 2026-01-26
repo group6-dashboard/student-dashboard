@@ -11,12 +11,47 @@ import type { PlanResult, StudyTask } from "@/lib/study-plan/types";
 import { generateStudyPlan } from "@/lib/study-plan/planner";
 import { useState } from "react";
 
+const mockTasks: StudyTask[] = [
+  {
+    id: "mock-1",
+    title: "Task1",
+    type: "Exam Prep",
+    startDate: "2026-01-29",
+    endDate: "2026-02-17",
+    totalHours: 100,
+    maxHoursPerWeek: 15,
+    availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  },
+  {
+    id: "mock-2",
+    title: "task2",
+    type: "Assignment",
+    startDate: "2026-01-29",
+    endDate: "2026-03-29",
+    totalHours: 200,
+    maxHoursPerWeek: 25,
+    availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  },
+  {
+    id: "mock-3",
+    title: "task3",
+    type: "Lecture",
+    startDate: "2026-01-29",
+    endDate: "2026-02-29",
+    totalHours: 50,
+    maxHoursPerWeek: 12,
+    availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  },
+];
+
 export default function StudyPlanGenerator() {
-  const [tasks, setTasks] = useState<StudyTask[]>([]);
+  const [tasks, setTasks] = useState<StudyTask[]>(mockTasks);
   const [open, setOpen] = useState(false);
 
   const [tab, setTab] = useState<TabKey>("Weekly");
-  const [result, setResult] = useState<PlanResult | null>(null);
+  const [result, setResult] = useState<PlanResult | null>(() =>
+    generateStudyPlan(mockTasks),
+  );
 
   const onAddTask = (task: StudyTask) => {
     setTasks((prev) => [...prev, task]);
@@ -63,7 +98,16 @@ export default function StudyPlanGenerator() {
                 <WeeklyView result={result} />
               ) : (
                 <div className="text-sm text-muted-foreground">
-                  Summary tab is under development.
+                  <p>
+                    This summary view is designed as a set of weekly donut
+                    charts.{" "}
+                  </p>
+                  <br />
+                  <p>
+                    Each chart represents one week, giving users a high-level
+                    overview of how their study time is allocated and how it
+                    evolves over the month.
+                  </p>
                 </div>
               )}
             </div>

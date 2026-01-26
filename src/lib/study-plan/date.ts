@@ -55,6 +55,6 @@ export function weeksBetween(
 
 export function formatRange(start: Date, end: Date): string {
   const fmt = (d: Date) =>
-    d.toLocaleDateString(undefined, { month: "short", day: "2-digit" });
+    d.toLocaleDateString("en-GB", { month: "short", day: "2-digit" });
   return `${fmt(start)} – ${fmt(end)}`;
 }
