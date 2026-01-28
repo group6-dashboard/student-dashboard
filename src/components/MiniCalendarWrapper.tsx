@@ -9,3 +9,6 @@ export default function MiniCalendarWrapper({
 }) {
   return <MiniCalendar currentDate={date} />;
 }
+
+
+

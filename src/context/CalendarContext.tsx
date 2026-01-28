@@ -15,3 +15,6 @@ export function CalendarProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useCalendar = () => useContext(CalendarContext);
+
+
+
