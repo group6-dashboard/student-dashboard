@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Download, Upload } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
-
 import EventCard from '@/components/EventCard';
 import MiniCalendar from '@/components/MiniCalendar';
 import UpcomingEvents from '@/components/UpcomingEvents';
@@ -13,7 +11,6 @@ import CalendarTitle from '@/components/CalendarTitle';
 import EventFilters from '@/components/EventFilters';
 import NewScheduleButton from '@/components/NewScheduleButton';
 import AddEventModal from '@/components/AddEventModal';
-
 
 
 export interface Event {
