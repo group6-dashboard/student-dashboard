@@ -1,11 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Download, Upload } from 'lucide-react';
+import { Download, Upload } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+
 import EventCard from '@/components/EventCard';
 import MiniCalendar from '@/components/MiniCalendar';
 import UpcomingEvents from '@/components/UpcomingEvents';
+import LiveClock from '@/components/LiveClock';
+import CalendarTitle from '@/components/CalendarTitle';
+import EventFilters from '@/components/EventFilters';
+import NewScheduleButton from '@/components/NewScheduleButton';
+import AddEventModal from '@/components/AddEventModal';
+
+
 
 export interface Event {
   id: string;
@@ -98,6 +107,9 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date(2022, 4, 1));
   const [viewMode, setViewMode] = useState<'Daily' | 'Weekly' | 'Monthly' | 'Yearly'>('Weekly');
   const [selectedCategory, setSelectedCategory] = useState('Category');
+  const [showModal, setShowModal] = useState(false);
+  const [type, setType] = useState('All');
+  const [priority, setPriority] = useState('All');
 
   useEffect(() => {
     const savedEvents = localStorage.getItem('calendar-events');
@@ -194,15 +206,32 @@ export default function CalendarPage() {
               </select>
             </div>
           </div>
-
+           
           {/* Calendar Header */}
           <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-purple-600 rounded-t-2xl p-6 text-white">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-bold">MAY 2022</h1>
+                <h1 className="text-2xl font-bold">Januery 2026</h1>
                 <span className="px-4 py-1 bg-white/20 rounded-full text-sm">
                   New Schedule
                 </span>
+                <LiveClock />
+                <CalendarTitle date={currentDate} />
+
+              <EventFilters
+                value={type}
+                onChange={setType}
+              />
+
+              <NewScheduleButton onClick={() => setShowModal(true)} />
+
+              {showModal && (
+                <AddEventModal
+                  onClose={() => setShowModal(false)}
+                  onAdd={(data) => console.log(data)}
+               />
+             )}
+
               </div>
               <div className="flex items-center gap-2 bg-white/10 rounded-lg p-1">
                 {(['Daily', 'Weekly', 'Monthly', 'Yearly'] as const).map((mode) => (
