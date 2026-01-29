@@ -1,4 +1,4 @@
-
+import SpendingDonutChart from '@/components/budget/SpendingDonutChart';
 import {
   Card,
   CardHeader,
@@ -44,10 +44,7 @@ export default function BudgetPage() {
           </CardHeader>
           <CardContent>
             {/* TODO (Draft demo): Donut / Pie chart with mock data */}
-            <Placeholder>
-              Donut chart placeholder — will visualize spending by category
-              (rent, groceries, transport, leisure).
-            </Placeholder>
+            <SpendingDonutChart />
           </CardContent>
         </Card>
 
