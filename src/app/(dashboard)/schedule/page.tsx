@@ -213,7 +213,7 @@ export default function CalendarPage() {
                   New Schedule
                 </span>
                 <LiveClock />
-                <CalendarTitle date={currentDate} />
+                {/* <CalendarTitle date={currentDate} /> */}
 
               <EventFilters
                 value={type}
