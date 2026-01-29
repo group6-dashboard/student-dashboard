@@ -1,4 +1,5 @@
 import SpendingDonutChart from '@/components/budget/SpendingDonutChart';
+import BudgetProgress from '@/components/budget/BudgetProgress';
 import {
   Card,
   CardHeader,
@@ -43,7 +44,6 @@ export default function BudgetPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {/* TODO (Draft demo): Donut / Pie chart with mock data */}
             <SpendingDonutChart />
           </CardContent>
         </Card>
@@ -64,11 +64,7 @@ export default function BudgetPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {/* TODO (Draft demo): Static progress / gauge indicator */}
-            <Placeholder>
-              Progress indicator placeholder — example: €350 / €500 used (static
-              value for draft demo).
-            </Placeholder>
+            <BudgetProgress budget={500} spent={430} />
           </CardContent>
         </Card>
 
