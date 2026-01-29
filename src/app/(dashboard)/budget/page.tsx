@@ -88,8 +88,25 @@ export default function BudgetPage() {
               - Income vs expense comparison
             */}
             <Placeholder>
-              Grouped bar chart placeholder — monthly income vs expenses (mock
-              data).
+              <div className="space-y-2">
+                <p>
+                  This section will visualize how income and expenses change
+                  over time.
+                </p>
+
+                <ul className="list-disc pl-4">
+                  <li>
+                    Grouped bar chart comparing income vs expense per month
+                  </li>
+                  <li>Based on mock monthly cashflow data</li>
+                  <li>Showing the last 3–6 months for trend analysis</li>
+                </ul>
+
+                <p className="text-xs">
+                  The goal is to highlight spending patterns and budget
+                  stability over time, rather than individual transactions.
+                </p>
+              </div>
             </Placeholder>
           </CardContent>
         </Card>
