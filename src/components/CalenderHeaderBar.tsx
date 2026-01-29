@@ -5,7 +5,6 @@ import CalendarHeaderTitle from './CalendarTitle';
 import NewScheduleButton from './NewScheduleButton';
 import CalendarTitle from './CalendarTitle';
 
-
 export default function CalendarHeaderBar({
   onNew,
 }: {
