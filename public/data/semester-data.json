@@ -1,0 +1,10 @@
+[
+  { "name": "Y1 Fall", "planned": 16, "actual": 16 },
+  { "name": "Y1 Spring", "planned": 32, "actual": 30 },
+  { "name": "Y2 Fall", "planned": 48, "actual": 48 },
+  { "name": "Y2 Spring", "planned": 64, "actual": 62 },
+  { "name": "Y3 Fall", "planned": 80, "actual": null },
+  { "name": "Y3 Spring", "planned": 96, "actual": null },
+  { "name": "Y4 Fall", "planned": 112, "actual": null },
+  { "name": "Y4 Spring", "planned": 124, "actual": null }
+]
