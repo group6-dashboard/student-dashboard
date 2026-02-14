@@ -5,6 +5,7 @@ import { Bell } from "lucide-react";
 import EventCard from "@/components/EventCard";
 
 export type ScheduleItem = {
+  startTime: any;
   title: string;
   date: string;
   time: string;
@@ -12,7 +13,7 @@ export type ScheduleItem = {
   type: "Meeting" | "Event" | "Personal" | "Deadline";
   weekday: string;
 
-  /* 🔔 Alarm (هر دو پشتیبانی می‌شود) */
+  /* Alarm  */
   alarmMinutes?: number;
   alarmBefore?: number;
 };
@@ -53,7 +54,7 @@ export default function EventList({
     weekday: "long",
   });
 
-  /* ✅ FILTERS */
+  /* FILTERS */
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
       const matchType =
@@ -151,7 +152,7 @@ export default function EventList({
                       }
                       className="relative cursor-grab active:cursor-grabbing"
                     >
-                      {/* 🔔 Alarm Indicator */}
+                      {/* Alarm Indicator */}
                       {alarmValue && (
                         <div className="absolute -top-2 -left-2 z-10 rounded-full bg-pink-500 p-1 text-white shadow">
                           <Bell size={12} />

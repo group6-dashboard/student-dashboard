@@ -72,7 +72,7 @@ export default function ScheduleHeader({
             </h1>
           </div>
 
-          {/* 🔍 Search */}
+          {/* Search */}
           <input
             value={search}
             onChange={(e) =>
@@ -83,7 +83,7 @@ export default function ScheduleHeader({
             className="h-10 w-56 rounded-full border px-4 text-sm focus:outline-none"
           />
 
-          {/* 📌 Type */}
+          {/* Type */}
           <select
             value={filterType}
             onChange={(e) =>
@@ -100,7 +100,7 @@ export default function ScheduleHeader({
             <option value="Deadline">Deadline</option>
           </select>
 
-          {/* 🚦 Priority */}
+          {/* Priority */}
           <select
             value={filterPriority}
             onChange={(e) =>
@@ -140,7 +140,7 @@ export default function ScheduleHeader({
         </div>
       </div>
 
-      {/* 🔥 Gradient Header */}
+      {/* Gradient Header */}
       <div className="rounded-2xl bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-5 text-white">
         <h2 className="text-xl font-semibold">
           Schedule Overview

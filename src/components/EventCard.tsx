@@ -7,7 +7,7 @@ type Props = {
   type: string;
   priority: string;
 
-  /* 🔔 NEW – alarm */
+  /* alarm */
   alarmMinutes?: number | null;
   onAlarmChange?: (minutes: number | null) => void;
 
@@ -29,7 +29,7 @@ export default function EventCard({
 
   return (
     <div className="relative rounded-xl border bg-white p-3 space-y-2 shadow-sm">
-      {/* ✏️ Edit */}
+      {/* Edit */}
       <button
         aria-label="Edit schedule"
         onClick={onEdit}
@@ -38,7 +38,7 @@ export default function EventCard({
         <Pencil size={14} />
       </button>
 
-      {/* 🗑 Delete */}
+      {/* Delete */}
       <button
         aria-label="Delete schedule"
         onClick={onDelete}
@@ -47,15 +47,15 @@ export default function EventCard({
         <Trash2 size={14} />
       </button>
 
-      {/* 📌 Title */}
+      {/* Title */}
       <h4 className="text-sm font-semibold break-words leading-snug">
         {title}
       </h4>
 
-      {/* ⏰ Time */}
+      {/* Time */}
       <p className="text-xs text-gray-500">{time}</p>
 
-      {/* 🏷 Tags */}
+      {/* Tags */}
       <div className="flex flex-wrap gap-2 text-xs">
         <span className="rounded bg-gray-100 px-2 py-0.5">
           {type}
@@ -76,7 +76,7 @@ export default function EventCard({
         </span>
       </div>
 
-      {/* 🔔 Alarm */}
+      {/* Alarm */}
       <div className="relative pt-2">
         <button
           onClick={() => setShowAlarmMenu(!showAlarmMenu)}
@@ -94,7 +94,7 @@ export default function EventCard({
             : "Add alert"}
         </button>
 
-        {/* ⏱ Alarm menu */}
+        {/* Alarm menu */}
         {showAlarmMenu && (
           <div className="absolute z-10 mt-2 w-44 rounded-lg border bg-white p-2 shadow">
             {[5, 10, 15, 30, 60].map((m) => (

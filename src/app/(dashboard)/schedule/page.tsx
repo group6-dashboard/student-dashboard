@@ -85,7 +85,7 @@ export default function SchedulePage() {
     return () => clearInterval(interval);
   }, [events]);
 
-  /* ===================== FILTER LOGIC (FIXED) ===================== */
+  /* ===================== FILTER LOGIC ===================== */
   const visibleEvents = useMemo(() => {
     let list = [...events];
 
@@ -105,7 +105,6 @@ export default function SchedulePage() {
       );
     }
 
-    // ✅ FIX: فقط در Daily و Agenda تاریخ فیلتر شود
     if (
       selectedDate &&
       (viewMode === "Daily" || viewMode === "Agenda")

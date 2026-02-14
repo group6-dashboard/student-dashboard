@@ -11,7 +11,6 @@ type ScheduleInput = {
   endTime: string;
   description: string;
 
-  // 🔔 Alarm (اضافه شده – بدون حذف قبلی)
   alarmEnabled?: boolean;
   alarmMinutes?: number;
 };
@@ -39,13 +38,11 @@ export default function NewScheduleModal({
       endTime: "",
       description: "",
 
-      // 🔔 مقدار پیش‌فرض آلارم
       alarmEnabled: false,
       alarmMinutes: 5,
     }
   );
 
-  // ✅ ریست فرم هنگام ساخت اسکجول جدید
   useEffect(() => {
     if (open && !initialData) {
       setForm({
@@ -144,7 +141,7 @@ export default function NewScheduleModal({
           }
         />
 
-        {/* ⏰ Time Picker */}
+        {/* Time Picker */}
         <div className="grid grid-cols-2 gap-4">
           <input
             type="time"
@@ -185,7 +182,7 @@ export default function NewScheduleModal({
           }
         />
 
-        {/* 🔔 Alarm Settings (جدید – حرفه‌ای) */}
+        {/* Alarm Settings */}
         <div className="rounded-lg border p-3 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">

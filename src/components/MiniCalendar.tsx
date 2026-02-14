@@ -5,7 +5,7 @@ import { ScheduleItem } from "@/components/EventList";
 
 type Props = {
   events?: ScheduleItem[];
-  onSelectDate?: (date: string | null) => void; // ⬅️ اضافه شد
+  onSelectDate?: (date: string | null) => void;
 };
 
 type ViewMode = "Day" | "Month" | "Year";
@@ -17,7 +17,6 @@ export default function MiniCalendar({
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
 
-  // ⬇️ بدون حذف قبلی
   const [viewMode, setViewMode] =
     useState<ViewMode>("Month");
 
@@ -157,7 +156,7 @@ export default function MiniCalendar({
                 >
                   {day}
 
-                  {/* 🔴 Event Indicator */}
+                  {/* Event Indicator */}
                   {hasEvent && (
                     <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-yellow-300" />
                   )}
