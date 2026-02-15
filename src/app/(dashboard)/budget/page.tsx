@@ -1,5 +1,6 @@
 import SpendingDonutChart from '@/components/budget/SpendingDonutChart';
 import BudgetProgress from '@/components/budget/BudgetProgress';
+import BudgetEntryForm from '@/components/budget/BudgetEntryForm';
 import {
   Card,
   CardHeader,
@@ -8,7 +9,7 @@ import {
   CardContent,
 } from '@/components/ui/Card';
 
-import { Badge } from '@/components/ui/primitives';
+import { Input, Textarea, Button,Badge } from '@/components/ui/primitives';
 
 export default function BudgetPage() {
   return (
@@ -123,16 +124,7 @@ export default function BudgetPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/*
-              TODO (Later):
-              - Simple table / form
-              - Fields: category, amount, month
-              - No full CRUD logic (visualization-driven)
-            */}
-            <Placeholder>
-              Input table placeholder — will allow adding expense / income
-              entries for visualization.
-            </Placeholder>
+            <BudgetEntryForm />
           </CardContent>
         </Card>
       </div>
