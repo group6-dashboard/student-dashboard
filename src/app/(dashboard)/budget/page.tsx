@@ -1,6 +1,12 @@
-import SpendingDonutChart from '@/components/budget/SpendingDonutChart';
+'use client';
+
+import React, { useEffect, startTransition,useMemo, useState } from 'react';
+import SpendingDonutChart, {DonutDatum} from '@/components/budget/SpendingDonutChart';
 import BudgetProgress from '@/components/budget/BudgetProgress';
 import BudgetEntryForm from '@/components/budget/BudgetEntryForm';
+import { mockBudgetData } from '@/data/budget';
+import type { BudgetEntry } from '@/lib/budget/budgetStorage';
+import { loadBudgetEntries, saveBudgetEntries } from '@/lib/budget/budgetStorage';
 import {
   Card,
   CardHeader,
@@ -9,9 +15,59 @@ import {
   CardContent,
 } from '@/components/ui/Card';
 
-import { Input, Textarea, Button,Badge } from '@/components/ui/primitives';
+import { Badge } from '@/components/ui/primitives';
 
 export default function BudgetPage() {
+const [entries, setEntries] = useState<BudgetEntry[]>([]);
+const [hydrated, setHydrated] = useState(false);
+
+// ✅ Load once after hydration (client only)
+useEffect(() => {
+  startTransition(() => {
+    setEntries(loadBudgetEntries());
+    setHydrated(true);
+  });
+}, []);
+
+// ✅ Persist after we have hydrated (avoid overwriting storage with [])
+useEffect(() => {
+  if (!hydrated) return;
+  saveBudgetEntries(entries);
+}, [entries, hydrated]);
+
+   const baselineSpent = useMemo(
+     () => mockBudgetData.categoryExpenses.reduce((s, x) => s + x.amount, 0),
+     [],
+   );
+
+   const entriesSpent = useMemo(
+     () => entries.reduce((s, e) => s + e.amount, 0),
+     [entries],
+   );
+
+   const totalSpent = baselineSpent + entriesSpent;
+   const budget = mockBudgetData.monthlyBudget;
+
+   const donutData: DonutDatum[] = useMemo(() => {
+     // Start from baseline
+     const map = new Map<string, number>();
+     for (const x of mockBudgetData.categoryExpenses) {
+       map.set(x.category, (map.get(x.category) ?? 0) + x.amount);
+     }
+     // Add entries (use raw category text; later you can switch to a dropdown)
+     for (const e of entries) {
+       const key = e.category.trim() || 'Other';
+       map.set(key, (map.get(key) ?? 0) + e.amount);
+     }
+
+     return Array.from(map.entries()).map(([name, value]) => ({ name, value }));
+   }, [entries]);
+
+   function handleAddEntry(entry: BudgetEntry) {
+     setEntries((prev) => [entry, ...prev]);
+   }
+
+
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -45,7 +101,7 @@ export default function BudgetPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <SpendingDonutChart />
+            <SpendingDonutChart data={donutData} />
           </CardContent>
         </Card>
 
@@ -65,7 +121,7 @@ export default function BudgetPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <BudgetProgress budget={500} spent={430} />
+            <BudgetProgress budget={budget} spent={totalSpent} />
           </CardContent>
         </Card>
 
@@ -124,7 +180,7 @@ export default function BudgetPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <BudgetEntryForm />
+            <BudgetEntryForm entries={entries} onAddEntry={handleAddEntry} />
           </CardContent>
         </Card>
       </div>
