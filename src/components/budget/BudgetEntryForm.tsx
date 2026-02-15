@@ -2,17 +2,9 @@
 
 import React, { useMemo, useState } from 'react';
 import { Badge, Button, Input, Textarea } from '@/components/ui/primitives';
+import type { BudgetEntry } from '@/lib/budget/budgetStorage';
 
-type BudgetEntry = {
-  id: string;
-  category: string;
-  amount: number;
-  month: string;
-  note?: string;
-};
-
-type Errors = Partial<Record<keyof Omit<BudgetEntry, 'id'>, string>>;
-
+type Errors = Partial<Record<'category' | 'amount' | 'month', string>>;
 function formatEuro(value: number) {
   return new Intl.NumberFormat('en-FI', {
     style: 'currency',
@@ -21,13 +13,18 @@ function formatEuro(value: number) {
   }).format(value);
 }
 
-export default function BudgetEntryForm() {
+export default function BudgetEntryForm({
+  entries,
+  onAddEntry,
+}: {
+  entries: BudgetEntry[];
+  onAddEntry: (entry: BudgetEntry) => void;
+}) {
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState<string>('');
   const [month, setMonth] = useState('');
   const [note, setNote] = useState('');
 
-  const [entries, setEntries] = useState<BudgetEntry[]>([]);
   const [errors, setErrors] = useState<Errors>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
@@ -35,17 +32,13 @@ export default function BudgetEntryForm() {
 
   function validate(): Errors {
     const next: Errors = {};
-
     if (!category.trim()) next.category = 'Please enter a category.';
     if (!month.trim()) next.month = 'Please enter a month (e.g., Jan).';
 
-    if (amount.trim().length === 0) {
-      next.amount = 'Please enter an amount.';
-    } else if (Number.isNaN(parsedAmount)) {
+    if (amount.trim().length === 0) next.amount = 'Please enter an amount.';
+    else if (Number.isNaN(parsedAmount))
       next.amount = 'Amount must be a number.';
-    } else if (parsedAmount <= 0) {
-      next.amount = 'Amount must be greater than 0.';
-    }
+    else if (parsedAmount <= 0) next.amount = 'Amount must be greater than 0.';
 
     return next;
   }
@@ -63,7 +56,6 @@ export default function BudgetEntryForm() {
 
     const nextErrors = validate();
     setErrors(nextErrors);
-
     if (Object.keys(nextErrors).length > 0) return;
 
     const entry: BudgetEntry = {
@@ -74,8 +66,7 @@ export default function BudgetEntryForm() {
       note: note.trim() ? note.trim() : undefined,
     };
 
-    // Step 1: store in memory only
-    setEntries((prev) => [entry, ...prev]);
+    onAddEntry(entry);
 
     clearForm();
     setSubmitAttempted(false);
@@ -151,22 +142,21 @@ export default function BudgetEntryForm() {
 
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            Prototype step: entries are stored in memory only.
+            Entries are saved locally in your browser (localStorage).
           </p>
           <Button type="submit">Add entry</Button>
         </div>
       </form>
 
-      {/* Preview list (memory-only) */}
       <div className="rounded-xl border border-border/60 bg-muted/10 p-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
             <div className="text-sm font-semibold">Preview</div>
             <div className="text-xs text-muted-foreground">
-              Recently added entries (not saved yet)
+              Recently added entries
             </div>
           </div>
-          <Badge className="bg-purple-100 text-purple-700">In-memory</Badge>
+          <Badge className="bg-purple-100 text-purple-700">Local</Badge>
         </div>
 
         {entries.length === 0 ? (

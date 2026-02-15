@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie,  ResponsiveContainer, Tooltip } from 'recharts';
 
-import { mockBudgetData } from '@/data/budget';
 
-type DonutDatum = {
+export type DonutDatum = {
   name: string;
   value: number;
+  fill?: string;
 };
 
-const DONUT_COLORS = [
+const DEFAULT_COLORS = [
   '#ec4899', // pink-500
   '#a855f7', // purple-500
   '#f472b6', // pink-400
@@ -26,29 +26,23 @@ function formatEuro(value: number) {
   }).format(value);
 }
 
-export default function SpendingDonutChart() {
-  const data: DonutDatum[] = mockBudgetData.categoryExpenses.map((x) => ({
-    name: x.category,
-    value: x.amount,
+export default function SpendingDonutChart({ data }: { data: DonutDatum[] }) {
+  const enriched = data.map((d, idx) => ({
+    ...d,
+    fill: d.fill ?? DEFAULT_COLORS[idx % DEFAULT_COLORS.length],
   }));
 
-  const total = data.reduce((sum, d) => sum + d.value, 0);
+  const total = enriched.reduce((sum, d) => sum + d.value, 0);
 
   return (
     <div className="grid gap-3 lg:grid-cols-[260px_1fr] lg:items-center">
       {/* Chart */}
-      <div className="h-[240px] w-full">
+      <div className="h-60 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Tooltip
-              formatter={(value) => formatEuro(Number(value))}
-              contentStyle={{
-                borderRadius: 12,
-                border: '1px solid rgba(0,0,0,0.08)',
-              }}
-            />
+            <Tooltip formatter={(value) => formatEuro(Number(value))} />
             <Pie
-              data={data}
+              data={enriched}
               dataKey="value"
               nameKey="name"
               innerRadius={70}
@@ -57,12 +51,6 @@ export default function SpendingDonutChart() {
               stroke="rgba(255,255,255,0.6)"
               strokeWidth={2}
             >
-              {data.map((_, idx) => (
-                <Cell
-                  key={`cell-${idx}`}
-                  fill={DONUT_COLORS[idx % DONUT_COLORS.length]}
-                />
-              ))}
             </Pie>
           </PieChart>
         </ResponsiveContainer>
@@ -76,13 +64,13 @@ export default function SpendingDonutChart() {
         </div>
 
         <div className="mt-4 space-y-2">
-          {data.map((d, idx) => (
+          {enriched.map((d) => (
             <div key={d.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span
                   className="inline-block h-2.5 w-2.5 rounded-full"
                   style={{
-                    backgroundColor: DONUT_COLORS[idx % DONUT_COLORS.length],
+                    backgroundColor: d.fill
                   }}
                 />
                 <span className="text-sm">{d.name}</span>
