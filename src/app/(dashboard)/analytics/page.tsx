@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -20,8 +20,16 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+interface SemesterData {
+  name: string;
+  planned: number;
+  actual: number | null;
+  credits: number | null;
+  gpa: number | null;
+}
+
 export default function AnalyticsPage() {
-  const [semesterData, setSemesterData] = useState([]);
+  const [semesterData, setSemesterData] = useState<SemesterData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,6 +44,64 @@ export default function AnalyticsPage() {
         setLoading(false);
       });
   }, []);
+
+  // Calculate statistics from semester data
+  const statistics = useMemo(() => {
+    const completedSemesters = semesterData.filter(s => s.actual !== null && s.gpa !== null);
+    
+    // Total credits earned (latest cumulative actual value)
+    const totalCreditsEarned = completedSemesters.length > 0 
+      ? completedSemesters[completedSemesters.length - 1].actual || 0
+      : 0;
+    
+    // Total target credits (last planned value)
+    const totalTargetCredits = semesterData.length > 0
+      ? semesterData[semesterData.length - 1].planned
+      : 124;
+    
+    // Progress percentage
+    const progressPercentage = (totalCreditsEarned / totalTargetCredits) * 100;
+    
+    // Calculate cumulative GPA (weighted average)
+    let cumulativeGPA = 0;
+    if (completedSemesters.length > 0) {
+      const totalCredits = completedSemesters.reduce((sum, s) => sum + (s.credits || 0), 0);
+      const totalGradePoints = completedSemesters.reduce((sum, s) => sum + (s.credits || 0) * (s.gpa || 0), 0);
+      cumulativeGPA = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+    }
+    
+    // Last semester GPA
+    const lastSemesterGPA = completedSemesters.length > 0
+      ? completedSemesters[completedSemesters.length - 1].gpa || 0
+      : 0;
+    
+    // Calculate previous cumulative GPA (without last semester)
+    let previousCumulativeGPA = 0;
+    if (completedSemesters.length > 1) {
+      const previousSemesters = completedSemesters.slice(0, -1);
+      const totalCredits = previousSemesters.reduce((sum, s) => sum + (s.credits || 0), 0);
+      const totalGradePoints = previousSemesters.reduce((sum, s) => sum + (s.credits || 0) * (s.gpa || 0), 0);
+      previousCumulativeGPA = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+    }
+    
+    // GPA change
+    const gpaChange = cumulativeGPA - previousCumulativeGPA;
+    
+    // Last semester name
+    const lastSemesterName = completedSemesters.length > 0
+      ? completedSemesters[completedSemesters.length - 1].name
+      : "N/A";
+
+    return {
+      totalCreditsEarned,
+      totalTargetCredits,
+      progressPercentage,
+      cumulativeGPA,
+      lastSemesterGPA,
+      gpaChange,
+      lastSemesterName
+    };
+  }, [semesterData]);
 
   if (loading) {
     return (
@@ -65,8 +131,10 @@ export default function AnalyticsPage() {
                 <CardTitle className="text-sm font-medium">Cumulative GPA</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">3.42</div>
-                <p className="text-xs text-muted-foreground">+0.12 (vs previous semester)</p>
+                <div className="text-2xl font-bold">{statistics.cumulativeGPA.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">
+                  {statistics.gpaChange >= 0 ? '+' : ''}{statistics.gpaChange.toFixed(2)} (vs previous semester)
+                </p>
               </CardContent>
             </Card>
             <Card>
@@ -74,9 +142,9 @@ export default function AnalyticsPage() {
                 <CardTitle className="text-sm font-medium">Last Semester GPA</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">3.65</div>
+                <div className="text-2xl font-bold">{statistics.lastSemesterGPA.toFixed(2)}</div>
                 <p className="text-xs text-green-600">
-                  Last Term: Spring 2025
+                  Last Term: {statistics.lastSemesterName}
                 </p>
               </CardContent>
             </Card>
@@ -85,9 +153,9 @@ export default function AnalyticsPage() {
                 <CardTitle className="text-sm font-medium">Total Credits Earned</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">62 / 124</div>
+                <div className="text-2xl font-bold">{statistics.totalCreditsEarned} / {statistics.totalTargetCredits}</div>
                 <div className="w-full bg-secondary h-2 mt-2 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full" style={{ width: '50%' }}></div>
+                  <div className="bg-blue-600 h-full" style={{ width: `${statistics.progressPercentage}%` }}></div>
                 </div>
               </CardContent>
             </Card>
