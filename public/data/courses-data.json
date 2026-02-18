@@ -1,0 +1,178 @@
+[
+  {
+    "id": 1,
+    "name": "Basics of Mathematics and Physics for Programmers",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 2,
+    "name": "Introduction to Programming and Software Development",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "5",
+    "status": "Completed"
+  },
+  {
+    "id": 3,
+    "name": "English for Working Life",
+    "category": "Basic and Professional Studies",
+    "credits": 3,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 4,
+    "name": "Computer Devices and Operating Systems",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "3",
+    "status": "Completed"
+  },
+  {
+    "id": 5,
+    "name": "HTML and CSS Programming",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "5",
+    "status": "Completed"
+  },
+  {
+    "id": 6,
+    "name": "Internet Programming and Databases",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 7,
+    "name": "Object Oriented Browser Programming",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 8,
+    "name": "Web Programming Project",
+    "category": "Basic and Professional Studies",
+    "credits": 15,
+    "grade": "5",
+    "status": "Completed"
+  },
+  {
+    "id": 9,
+    "name": "Web Development Frameworks",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 10,
+    "name": "Cloud Services",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "3",
+    "status": "Completed"
+  },
+  {
+    "id": 11,
+    "name": "Java Programming",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 12,
+    "name": "Advanced Web Applications Project",
+    "category": "Basic and Professional Studies",
+    "credits": 15,
+    "grade": "5",
+    "status": "Completed"
+  },
+  {
+    "id": 13,
+    "name": "Mobile Programming with Native Technologies",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 14,
+    "name": "Advanced Software Development Techniques",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "5",
+    "status": "Completed"
+  },
+  {
+    "id": 15,
+    "name": "Data Storage and Data Analysis",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 16,
+    "name": "Software testing",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "3",
+    "status": "Completed"
+  },
+  {
+    "id": 17,
+    "name": "Components of IoT Application",
+    "category": "Basic and Professional Studies",
+    "credits": 5,
+    "grade": "-",
+    "status": "In Progress"
+  },
+  {
+    "id": 18,
+    "name": "Company-Oriented Product Development Project 1",
+    "category": "Company-oriented Projects",
+    "credits": 10,
+    "grade": "4",
+    "status": "Completed"
+  },
+  {
+    "id": 19,
+    "name": "Company-Oriented Product Development Project 2",
+    "category": "Company-oriented Projects",
+    "credits": 10,
+    "grade": "-",
+    "status": "In Progress"
+  },
+  {
+    "id": 20,
+    "name": "Product Design and Implementation",
+    "category": "Free-choice Studies",
+    "credits": 15,
+    "grade": "5",
+    "status": "Completed"
+  },
+  {
+    "id": 21,
+    "name": "Harjoittelu",
+    "category": "Practical Training",
+    "credits": 30,
+    "grade": "5",
+    "status": "Completed"
+  },
+  {
+    "id": 22,
+    "name": "Opinnäytetyö",
+    "category": "Bachelor's Thesis",
+    "credits": 15,
+    "grade": "-",
+    "status": "In Progress"
+  }
+]
