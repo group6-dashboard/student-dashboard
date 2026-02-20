@@ -12,16 +12,6 @@ export default function WeeklyView({ result }: { result: PlanResult }) {
     <div className="space-y-3">
       <Card>
         <CardContent className="pt-5">
-          {weeklyCapacity != null && (
-            <div className="mb-3 text-sm text-muted-foreground">
-              Assumed weekly available study time:{" "}
-              <span className="font-medium text-foreground">
-                {weeklyCapacity}h
-              </span>{" "}
-              / week
-            </div>
-          )}
-
           <div className="overflow-x-hidden">
             <table className="w-full text-sm">
               <thead>

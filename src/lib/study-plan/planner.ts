@@ -1,11 +1,13 @@
 import { parseISODate, weeksBetween } from "./date";
 import type { PlanResult, StudyTask, WeekAllocation } from "./types";
 
-// Scheme A defaults (hidden from UI)
-const WEEKLY_HOURS = 40;
-const BUFFER_PERCENT = 0; // change to 0 if you want no buffer
+export function generateStudyPlan(
+  tasks: StudyTask[],
+  opts: { weeklyHours: number },
+): PlanResult {
+  // Scheme A defaults (hidden from UI)
+  const WEEKLY_HOURS = opts.weeklyHours;
 
-export function generateStudyPlan(tasks: StudyTask[]): PlanResult {
   if (tasks.length === 0) {
     return {
       weeks: [],
@@ -13,7 +15,6 @@ export function generateStudyPlan(tasks: StudyTask[]): PlanResult {
       totals: {
         totalRequired: 0,
         totalCapacity: 0,
-        totalBuffer: 0,
         totalAllocated: 0,
       },
       notices: [],
@@ -24,15 +25,13 @@ export function generateStudyPlan(tasks: StudyTask[]): PlanResult {
   const planStart = minISO(tasks.map((t) => t.startDate));
   const planEnd = maxISO(tasks.map((t) => t.endDate));
 
-  const usablePerWeek = round1(WEEKLY_HOURS * (1 - BUFFER_PERCENT / 100));
-  const bufferPerWeek = round1(WEEKLY_HOURS * (BUFFER_PERCENT / 100));
+  const usablePerWeek = round1(WEEKLY_HOURS);
 
   const weeks = weeksBetween(planStart, planEnd).map((w, index) => ({
     index: index + 1,
     start: w.start,
     end: w.end,
     capacityHours: usablePerWeek,
-    bufferHours: bufferPerWeek,
   }));
 
   const weekAllocations: WeekAllocation[] = weeks.map((w) => ({
@@ -117,21 +116,11 @@ export function generateStudyPlan(tasks: StudyTask[]): PlanResult {
   const totalCapacity = round1(
     weekAllocations.reduce((s, w) => s + w.week.capacityHours, 0),
   );
-  const totalBuffer = round1(
-    weekAllocations.reduce((s, w) => s + w.week.bufferHours, 0),
-  );
   const totalAllocated = round1(
     weekAllocations.reduce((s, w) => s + w.usedHours, 0),
   );
 
   const notices: PlanResult["notices"] = [];
-
-  if (totalRequired > totalCapacity) {
-    notices.push({
-      kind: "danger",
-      message: `Total required hours are ${totalRequired}h, but you only have ${totalCapacity}h available (default ${WEEKLY_HOURS}h/week with ${BUFFER_PERCENT}% buffer).`,
-    });
-  }
 
   for (const s of taskStatus) {
     if (s.risk !== "OK") {
@@ -146,7 +135,7 @@ export function generateStudyPlan(tasks: StudyTask[]): PlanResult {
   return {
     weeks: weekAllocations,
     taskStatus,
-    totals: { totalRequired, totalCapacity, totalBuffer, totalAllocated },
+    totals: { totalRequired, totalCapacity, totalAllocated },
     notices,
   };
 }
