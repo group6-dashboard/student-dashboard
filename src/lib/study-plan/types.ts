@@ -19,7 +19,6 @@ export type StudyTask = {
   endDate: string;
   totalHours: number;
   maxHoursPerWeek?: number;
-
   availableDays?: AvailabilityDay[]; // UI only for now (not used by algorithm yet)
 };
 
@@ -28,7 +27,6 @@ export type WeekBucket = {
   start: Date;
   end: Date;
   capacityHours: number; // usable hours after buffer
-  bufferHours: number;
 };
 
 export type AllocationRow = {
@@ -62,7 +60,6 @@ export type PlanResult = {
   totals: {
     totalRequired: number;
     totalCapacity: number;
-    totalBuffer: number;
     totalAllocated: number;
   };
   notices: Array<{

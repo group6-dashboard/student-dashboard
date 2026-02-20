@@ -53,6 +53,18 @@ export function weeksBetween(
   return weeks;
 }
 
+export function weeksCountBetween(startISO: string, endISO: string): number {
+  return weeksBetween(startISO, endISO).length;
+}
+
+export function daysCountBetween(startISO: string, endISO: string): number {
+  const start = parseISODate(startISO);
+  const end = parseISODate(endISO);
+  const ms = end.getTime() - start.getTime();
+
+  return Math.max(1, Math.floor(ms / (1000 * 60 * 60 * 24)) + 1);
+}
+
 export function formatRange(start: Date, end: Date): string {
   const fmt = (d: Date) =>
     d.toLocaleDateString("en-GB", { month: "short", day: "2-digit" });

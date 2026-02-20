@@ -1,9 +1,11 @@
 "use client";
 
-import { Text } from "@/components/ui/primitives";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Input, Text } from "@/components/ui/primitives";
+
 import Tabs, { TabKey } from "@/components/study-plan/Tabs";
 import WeeklyView from "@/components/study-plan/WeeklyView";
-//import SummaryView from "@/components/study-plan/SummaryView";
+import SummaryView from "@/components/study-plan/SummaryView";
 import TaskListPanel from "@/components/study-plan/TaskListPanel";
 import TaskCreateModal from "@/components/study-plan/TaskCreateModal";
 
@@ -19,7 +21,7 @@ const mockTasks: StudyTask[] = [
     startDate: "2026-01-29",
     endDate: "2026-02-17",
     totalHours: 100,
-    maxHoursPerWeek: 15,
+    maxHoursPerWeek: 25,
     availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
   },
   {
@@ -48,10 +50,11 @@ export default function StudyPlanGenerator() {
   const [tasks, setTasks] = useState<StudyTask[]>(mockTasks);
   const [open, setOpen] = useState(false);
 
+  const [weeklyHours, setWeeklyHours] = useState<string>("");
+  const [weeklyHoursError, setWeeklyHoursError] = useState<string | null>(null);
+
   const [tab, setTab] = useState<TabKey>("Weekly");
-  const [result, setResult] = useState<PlanResult | null>(() =>
-    generateStudyPlan(mockTasks),
-  );
+  const [result, setResult] = useState<PlanResult | null>(null);
 
   const onAddTask = (task: StudyTask) => {
     setTasks((prev) => [...prev, task]);
@@ -62,7 +65,19 @@ export default function StudyPlanGenerator() {
   };
 
   const onGenerate = () => {
-    setResult(generateStudyPlan(tasks));
+    if (weeklyHours.trim() === "") {
+      setWeeklyHoursError("“Available study time” cannot be empty.");
+      return;
+    }
+
+    const n = Number(weeklyHours);
+    if (!Number.isFinite(n) || n <= 0) {
+      setWeeklyHoursError("“Available study time” must be greater than 0.");
+      return;
+    }
+
+    setWeeklyHoursError(null);
+    setResult(generateStudyPlan(tasks, { weeklyHours: n }));
   };
 
   return (
@@ -81,6 +96,69 @@ export default function StudyPlanGenerator() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* LEFT */}
         <div className="lg:col-span-4 space-y-4">
+          {/* Weekly availability */}
+          <Card className="h-fit">
+            <CardHeader>
+              <CardTitle>Available study time (hours/week)</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="space-y-1">
+                <Input
+                  id="weeklyHours"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={weeklyHours}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+
+                    if (raw === "") {
+                      setWeeklyHours("");
+                      setWeeklyHoursError(
+                        "Available study time cannot be empty.",
+                      );
+                      return;
+                    }
+
+                    if (!/^\d+$/.test(raw)) return;
+
+                    const normalized = raw.replace(/^0+(?=\d)/, "");
+
+                    setWeeklyHours(normalized);
+
+                    setWeeklyHoursError(null);
+                  }}
+                  onBlur={() => {
+                    if (weeklyHours.trim() === "") {
+                      setWeeklyHoursError(
+                        "Available study time cannot be empty.",
+                      );
+                      return;
+                    }
+                    const n = Number(weeklyHours);
+                    if (!Number.isFinite(n) || n <= 0) {
+                      setWeeklyHoursError(
+                        "Available study time must be greater than 0.",
+                      );
+                      return;
+                    }
+
+                    setWeeklyHoursError(null);
+                  }}
+                />
+                {weeklyHoursError && (
+                  <Text variant="caption" className="text-destructive">
+                    {weeklyHoursError}
+                  </Text>
+                )}
+                <Text variant="caption" className="text-muted-foreground">
+                  This value will be applied when you click “Generate Study
+                  Plan”.
+                </Text>
+              </div>
+            </CardContent>
+          </Card>
+
           <TaskListPanel
             tasks={tasks}
             onAddClick={() => setOpen(true)}
@@ -102,18 +180,7 @@ export default function StudyPlanGenerator() {
               ) : tab === "Weekly" ? (
                 <WeeklyView result={result} />
               ) : (
-                <div className="text-sm text-muted-foreground">
-                  <p>
-                    This summary view will be designed as a set of weekly donut
-                    charts.{" "}
-                  </p>
-                  <br />
-                  <p>
-                    Each chart represents one week, giving users a high-level
-                    overview of how their study time is allocated and how it
-                    evolves over the month.
-                  </p>
-                </div>
+                <SummaryView result={result} tasks={tasks} />
               )}
             </div>
           </div>

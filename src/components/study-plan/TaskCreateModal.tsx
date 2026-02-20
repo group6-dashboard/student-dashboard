@@ -13,6 +13,7 @@ import type {
   TaskType,
   AvailabilityDay,
 } from "@/lib/study-plan/types";
+import { weeksCountBetween, daysCountBetween } from "@/lib/study-plan/date";
 import { useState } from "react";
 
 const TYPES: TaskType[] = [
@@ -60,6 +61,8 @@ export default function TaskCreateModal({
   onAdd: (task: StudyTask) => void;
 }) {
   const [draft, setDraft] = useState<StudyTask>(() => newDraft());
+  const weeks = weeksCountBetween(draft.startDate, draft.endDate);
+  const days = daysCountBetween(draft.startDate, draft.endDate);
 
   if (!open) return null;
 
@@ -150,6 +153,10 @@ export default function TaskCreateModal({
                   }
                 />
               </div>
+              <Text variant="caption" className="text-muted-foreground">
+                Time window: ~{weeks} week{weeks > 1 ? "s" : ""} ({days} day
+                {days > 1 ? "s" : ""})
+              </Text>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
