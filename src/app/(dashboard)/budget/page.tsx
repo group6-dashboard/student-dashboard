@@ -135,7 +135,7 @@ export default function BudgetPage() {
                   Where your money goes this month.
                 </CardDescription>
               </div>
-              <Badge className="bg-pink-100 text-pink-700">Draft</Badge>
+              <Badge className="bg-pink-100 text-pink-700">Current</Badge>
             </div>
           </CardHeader>
           <CardContent>
@@ -154,7 +154,7 @@ export default function BudgetPage() {
                   How much of your monthly budget is already used.
                 </CardDescription>
               </div>
-              <Badge className="bg-purple-100 text-purple-700">Draft</Badge>
+              <Badge className="bg-purple-100 text-purple-700">Progress</Badge>
             </div>
           </CardHeader>
           <CardContent>
