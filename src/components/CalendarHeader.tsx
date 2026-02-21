@@ -18,9 +18,7 @@ export default function CalendarHeader({
   return (
     <div className="rounded-2xl bg-gradient-to-r from-pink-500 to-purple-500 p-6 text-white space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">
-          JANUARY 2026
-        </h2>
+        <h2 className="text-2xl font-semibold">JANUARY 2026</h2>
 
         <button
           onClick={onNew}
@@ -31,9 +29,7 @@ export default function CalendarHeader({
 
         <div className="flex bg-white/20 rounded-lg overflow-hidden text-sm">
           <button className="px-4 py-2">Daily</button>
-          <button className="px-4 py-2 bg-white text-purple-600">
-            Weekly
-          </button>
+          <button className="px-4 py-2 bg-white text-purple-600">Weekly</button>
           <button className="px-4 py-2">Monthly</button>
           <button className="px-4 py-2">Agenda</button>
         </div>
@@ -52,9 +48,7 @@ export default function CalendarHeader({
             >
               {d.num}
             </div>
-            <div className="text-xs opacity-80">
-              {d.label}
-            </div>
+            <div className="text-xs opacity-80">{d.label}</div>
           </div>
         ))}
       </div>

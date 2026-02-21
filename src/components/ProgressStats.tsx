@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 type Props = {
   total: number;
   completed: number;
@@ -11,8 +13,29 @@ export default function ProgressStats({
   completed,
   alarms,
 }: Props) {
+  const [stats, setStats] = useState({ total, completed, alarms });
+
+  // Load from localStorage if available
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("progressStats");
+      if (saved) {
+        setStats(JSON.parse(saved));
+      } else {
+        setStats({ total, completed, alarms });
+      }
+    }
+  }, [total, completed, alarms]);
+
+  // Save to localStorage whenever stats change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("progressStats", JSON.stringify(stats));
+    }
+  }, [stats]);
+
   const percent =
-    total === 0 ? 0 : Math.round((completed / total) * 100);
+    stats.total === 0 ? 0 : Math.round((stats.completed / stats.total) * 100);
 
   return (
     <div className="space-y-3">
@@ -29,8 +52,8 @@ export default function ProgressStats({
       </div>
 
       <div className="flex justify-between text-xs text-white/80 pt-1">
-        <span>{completed} completed</span>
-        <span>{alarms} alarms active</span>
+        <span>{stats.completed} completed</span>
+        <span>{stats.alarms} alarms active</span>
       </div>
     </div>
   );

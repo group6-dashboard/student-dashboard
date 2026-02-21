@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 const DAYS = [
   { key: "Sunday", label: "S" },
   { key: "Monday", label: "M" },
@@ -11,9 +13,14 @@ const DAYS = [
 ];
 
 export default function WeeklyHeader() {
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-  });
+  const [today, setToday] = useState<string>("");
+
+  useEffect(() => {
+    const current = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+    setToday(current);
+  }, []);
 
   return (
     <div className="grid grid-cols-7 gap-2 mb-4">

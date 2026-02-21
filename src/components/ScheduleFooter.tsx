@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   BarChart3,
   Bell,
@@ -14,26 +15,32 @@ type Props = {
 };
 
 export default function ScheduleFooter({ events }: Props) {
-  const total = events.length;
+  const [stats, setStats] = useState({
+    total: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+    withAlarm: 0,
+  });
 
-  const high = events.filter(
-    (e) => e.priority === "High"
-  ).length;
+  // Compute and load stats from localStorage
+  useEffect(() => {
+    const total = events.length;
+    const high = events.filter((e) => e.priority === "High").length;
+    const medium = events.filter((e) => e.priority === "Medium").length;
+    const low = events.filter((e) => e.priority === "Low").length;
+    const withAlarm = events.filter((e) => e.alarmMinutes).length;
 
-  const medium = events.filter(
-    (e) => e.priority === "Medium"
-  ).length;
+    const newStats = { total, high, medium, low, withAlarm };
+    setStats(newStats);
 
-  const low = events.filter(
-    (e) => e.priority === "Low"
-  ).length;
-
-  const withAlarm = events.filter(
-    (e) => e.alarmMinutes
-  ).length;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("scheduleFooterStats", JSON.stringify(newStats));
+    }
+  }, [events]);
 
   const percent = (n: number) =>
-    total === 0 ? 0 : Math.round((n / total) * 100);
+    stats.total === 0 ? 0 : Math.round((n / stats.total) * 100);
 
   return (
     <footer className="mt-16 border-t bg-gradient-to-b from-white to-gray-50 py-10">
@@ -56,21 +63,9 @@ export default function ScheduleFooter({ events }: Props) {
         {/* ===== Progress Bars ===== */}
         <div className="space-y-4">
           {[
-            {
-              label: "High Priority",
-              value: high,
-              color: "bg-red-500",
-            },
-            {
-              label: "Medium Priority",
-              value: medium,
-              color: "bg-yellow-400",
-            },
-            {
-              label: "Low Priority",
-              value: low,
-              color: "bg-green-500",
-            },
+            { label: "High Priority", value: stats.high, color: "bg-red-500" },
+            { label: "Medium Priority", value: stats.medium, color: "bg-yellow-400" },
+            { label: "Low Priority", value: stats.low, color: "bg-green-500" },
           ].map((item) => (
             <div key={item.label}>
               <div className="mb-1 flex justify-between text-xs font-medium">
@@ -80,9 +75,7 @@ export default function ScheduleFooter({ events }: Props) {
               <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
                 <div
                   className={`h-full ${item.color} transition-all duration-700`}
-                  style={{
-                    width: `${percent(item.value)}%`,
-                  }}
+                  style={{ width: `${percent(item.value)}%` }}
                 />
               </div>
             </div>
@@ -91,29 +84,10 @@ export default function ScheduleFooter({ events }: Props) {
 
         {/* ===== Stats Cards ===== */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            icon={<ListTodo />}
-            label="Total Tasks"
-            value={total}
-          />
-          <StatCard
-            icon={<Flame />}
-            label="High Priority"
-            value={high}
-            color="text-red-500"
-          />
-          <StatCard
-            icon={<Bell />}
-            label="With Alarm"
-            value={withAlarm}
-            color="text-pink-500"
-          />
-          <StatCard
-            icon={<CheckCircle2 />}
-            label="Status"
-            value="Active"
-            color="text-green-600"
-          />
+          <StatCard icon={<ListTodo />} label="Total Tasks" value={stats.total} />
+          <StatCard icon={<Flame />} label="High Priority" value={stats.high} color="text-red-500" />
+          <StatCard icon={<Bell />} label="With Alarm" value={stats.withAlarm} color="text-pink-500" />
+          <StatCard icon={<CheckCircle2 />} label="Status" value="Active" color="text-green-600" />
         </div>
       </div>
     </footer>
@@ -135,12 +109,8 @@ function StatCard({
   return (
     <div className="rounded-xl border bg-white p-4 shadow-sm transition hover:shadow-md">
       <div className={`mb-2 ${color}`}>{icon}</div>
-      <p className="text-xs text-gray-500">
-        {label}
-      </p>
-      <p className="text-lg font-semibold">
-        {value}
-      </p>
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-lg font-semibold">{value}</p>
     </div>
   );
 }

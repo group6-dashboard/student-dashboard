@@ -48,18 +48,14 @@ export default function EventCard({
       </button>
 
       {/* Title */}
-      <h4 className="text-sm font-semibold break-words leading-snug">
-        {title}
-      </h4>
+      <h4 className="text-sm font-semibold break-words leading-snug">{title}</h4>
 
       {/* Time */}
       <p className="text-xs text-gray-500">{time}</p>
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2 text-xs">
-        <span className="rounded bg-gray-100 px-2 py-0.5">
-          {type}
-        </span>
+        <span className="rounded bg-gray-100 px-2 py-0.5">{type}</span>
 
         <span
           className={`rounded px-2 py-0.5
@@ -89,9 +85,7 @@ export default function EventCard({
           `}
         >
           <Bell size={14} />
-          {alarmMinutes
-            ? `Alert ${alarmMinutes} min before`
-            : "Add alert"}
+          {alarmMinutes ? `Alert ${alarmMinutes} min before` : "Add alert"}
         </button>
 
         {/* Alarm menu */}

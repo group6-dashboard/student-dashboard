@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Bell } from "lucide-react";
 import EventCard from "@/components/EventCard";
 
 export type ScheduleItem = {
+  endTime: string;
+  description: string;
   startTime: any;
   title: string;
   date: string;
@@ -49,6 +51,23 @@ export default function EventList({
   search = "",
 }: Props) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [localEvents, setLocalEvents] = useState<ScheduleItem[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("events");
+      return saved ? JSON.parse(saved) : events;
+    }
+    return events;
+  });
+
+  /* Update localEvents whenever props.events change */
+  useEffect(() => {
+    setLocalEvents(events);
+  }, [events]);
+
+  /* Persist to localStorage whenever localEvents change */
+  useEffect(() => {
+    localStorage.setItem("events", JSON.stringify(localEvents));
+  }, [localEvents]);
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -56,24 +75,20 @@ export default function EventList({
 
   /* FILTERS */
   const filteredEvents = useMemo(() => {
-    return events.filter((event) => {
+    return localEvents.filter((event) => {
       const matchType =
-        filterType === "All Types" ||
-        event.type === filterType;
+        filterType === "All Types" || event.type === filterType;
 
       const matchPriority =
-        filterPriority === "All Priorities" ||
-        event.priority === filterPriority;
+        filterPriority === "All Priorities" || event.priority === filterPriority;
 
       const matchSearch =
         search.trim() === "" ||
-        event.title
-          .toLowerCase()
-          .includes(search.toLowerCase());
+        event.title.toLowerCase().includes(search.toLowerCase());
 
       return matchType && matchPriority && matchSearch;
     });
-  }, [events, filterType, filterPriority, search]);
+  }, [localEvents, filterType, filterPriority, search]);
 
   return (
     <div className="grid grid-cols-7 gap-6">
@@ -91,6 +106,12 @@ export default function EventList({
             onDrop={() => {
               if (dragIndex !== null) {
                 onMove(dragIndex, day);
+
+                /* Update localEvents for localStorage */
+                const updated = [...localEvents];
+                updated[dragIndex].weekday = day;
+                setLocalEvents(updated);
+
                 setDragIndex(null);
               }
             }}
@@ -120,9 +141,7 @@ export default function EventList({
 
               <span
                 className={`text-xs font-medium ${
-                  isToday
-                    ? "text-pink-600"
-                    : "text-gray-500"
+                  isToday ? "text-pink-600" : "text-gray-500"
                 }`}
               >
                 {day.slice(0, 3)}
@@ -132,24 +151,18 @@ export default function EventList({
             {/* ===== Events ===== */}
             <div className="flex flex-1 flex-col gap-2 px-3 pb-3">
               {dayEvents.length === 0 ? (
-                <p className="text-center text-xs text-gray-400">
-                  No tasks
-                </p>
+                <p className="text-center text-xs text-gray-400">No tasks</p>
               ) : (
                 dayEvents.map((event) => {
-                  const realIndex = events.indexOf(event);
+                  const realIndex = localEvents.indexOf(event);
 
-                  const alarmValue =
-                    event.alarmMinutes ??
-                    event.alarmBefore;
+                  const alarmValue = event.alarmMinutes ?? event.alarmBefore;
 
                   return (
                     <div
                       key={realIndex}
                       draggable
-                      onDragStart={() =>
-                        setDragIndex(realIndex)
-                      }
+                      onDragStart={() => setDragIndex(realIndex)}
                       className="relative cursor-grab active:cursor-grabbing"
                     >
                       {/* Alarm Indicator */}
@@ -164,12 +177,17 @@ export default function EventList({
                         time={event.time}
                         type={event.type}
                         priority={event.priority}
-                        onEdit={() =>
-                          onEdit(realIndex)
-                        }
-                        onDelete={() =>
-                          onDelete(realIndex)
-                        }
+                        alarmMinutes={event.alarmMinutes}
+                        onEdit={() => onEdit(realIndex)}
+                        onDelete={() => {
+                          onDelete(realIndex);
+                          setLocalEvents(localEvents.filter((_, i) => i !== realIndex));
+                        }}
+                        onAlarmChange={(minutes) => {
+                          const updated = [...localEvents];
+                          updated[realIndex].alarmMinutes = minutes ?? undefined;
+                          setLocalEvents(updated);
+                        }}
                       />
                     </div>
                   );
