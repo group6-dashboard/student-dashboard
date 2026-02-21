@@ -41,7 +41,10 @@ export default function IncomeExpenseBarChart({
           margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
           barGap={6}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.3)" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="rgba(148, 163, 184, 0.3)"
+          />
           <XAxis dataKey="month" tickLine={false} axisLine={false} />
           <YAxis
             tickLine={false}
@@ -50,7 +53,7 @@ export default function IncomeExpenseBarChart({
             width={68}
           />
           <Tooltip
-            formatter={(value: number) => formatEuro(value)}
+            formatter={(value) => formatEuro(Number(value ?? 0))}
             contentStyle={{
               borderRadius: 12,
               border: '1px solid rgba(148, 163, 184, 0.35)',
