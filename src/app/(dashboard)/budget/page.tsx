@@ -1,9 +1,14 @@
 'use client';
 
-import React, { useEffect, startTransition,useMemo, useState } from 'react';
-import SpendingDonutChart, {DonutDatum} from '@/components/budget/SpendingDonutChart';
+import React, { startTransition, useEffect, useMemo, useState } from 'react';
+import SpendingDonutChart, {
+  DonutDatum,
+} from '@/components/budget/SpendingDonutChart';
 import BudgetProgress from '@/components/budget/BudgetProgress';
 import BudgetEntryForm from '@/components/budget/BudgetEntryForm';
+import IncomeExpenseBarChart, {
+  IncomeExpenseDatum,
+} from '@/components/budget/IncomeExpenseBarChart';
 import { mockBudgetData } from '@/data/budget';
 import type { BudgetEntry } from '@/lib/budget/budgetStorage';
 import { loadBudgetEntries, saveBudgetEntries } from '@/lib/budget/budgetStorage';
@@ -14,63 +19,98 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/Card';
-
 import { Badge } from '@/components/ui/primitives';
 
 export default function BudgetPage() {
-const [entries, setEntries] = useState<BudgetEntry[]>([]);
-const [hydrated, setHydrated] = useState(false);
+  const [entries, setEntries] = useState<BudgetEntry[]>([]);
+  const [hydrated, setHydrated] = useState(false);
 
-// ✅ Load once after hydration (client only)
-useEffect(() => {
-  startTransition(() => {
-    setEntries(loadBudgetEntries());
-    setHydrated(true);
-  });
-}, []);
+  useEffect(() => {
+    startTransition(() => {
+      setEntries(loadBudgetEntries());
+      setHydrated(true);
+    });
+  }, []);
 
-// ✅ Persist after we have hydrated (avoid overwriting storage with [])
-useEffect(() => {
-  if (!hydrated) return;
-  saveBudgetEntries(entries);
-}, [entries, hydrated]);
+  useEffect(() => {
+    if (!hydrated) return;
+    saveBudgetEntries(entries);
+  }, [entries, hydrated]);
 
-   const baselineSpent = useMemo(
-     () => mockBudgetData.categoryExpenses.reduce((s, x) => s + x.amount, 0),
-     [],
-   );
+  const baselineSpent = useMemo(
+    () => mockBudgetData.categoryExpenses.reduce((sum, item) => sum + item.amount, 0),
+    [],
+  );
 
-   const entriesSpent = useMemo(
-     () => entries.reduce((s, e) => s + e.amount, 0),
-     [entries],
-   );
+  const entriesSpent = useMemo(
+    () => entries.reduce((sum, entry) => sum + entry.amount, 0),
+    [entries],
+  );
 
-   const totalSpent = baselineSpent + entriesSpent;
-   const budget = mockBudgetData.monthlyBudget;
+  const totalSpent = baselineSpent + entriesSpent;
+  const budget = mockBudgetData.monthlyBudget;
 
-   const donutData: DonutDatum[] = useMemo(() => {
-     // Start from baseline
-     const map = new Map<string, number>();
-     for (const x of mockBudgetData.categoryExpenses) {
-       map.set(x.category, (map.get(x.category) ?? 0) + x.amount);
-     }
-     // Add entries (use raw category text; later you can switch to a dropdown)
-     for (const e of entries) {
-       const key = e.category.trim() || 'Other';
-       map.set(key, (map.get(key) ?? 0) + e.amount);
-     }
+  const donutData: DonutDatum[] = useMemo(() => {
+    const categoryMap = new Map<string, number>();
 
-     return Array.from(map.entries()).map(([name, value]) => ({ name, value }));
-   }, [entries]);
+    for (const item of mockBudgetData.categoryExpenses) {
+      categoryMap.set(item.category, (categoryMap.get(item.category) ?? 0) + item.amount);
+    }
 
-   function handleAddEntry(entry: BudgetEntry) {
-     setEntries((prev) => [entry, ...prev]);
-   }
+    for (const entry of entries) {
+      const key = entry.category.trim() || 'Other';
+      categoryMap.set(key, (categoryMap.get(key) ?? 0) + entry.amount);
+    }
 
+    return Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
+  }, [entries]);
+
+  const incomeExpenseData: IncomeExpenseDatum[] = useMemo(() => {
+    const normalizeMonthKey = (month: string) => month.trim().slice(0, 3).toLowerCase();
+    const toMonthLabel = (month: string) => {
+      const key = normalizeMonthKey(month);
+      if (!key) return 'N/A';
+      return key[0].toUpperCase() + key.slice(1);
+    };
+
+    const monthMap = new Map<string, IncomeExpenseDatum>();
+
+    for (const item of mockBudgetData.monthlyCashflow) {
+      const key = normalizeMonthKey(item.month);
+      if (!key) continue;
+
+      monthMap.set(key, {
+        month: toMonthLabel(item.month),
+        income: item.income,
+        expense: item.expense,
+      });
+    }
+
+    for (const entry of entries) {
+      const key = normalizeMonthKey(entry.month);
+      if (!key) continue;
+
+      const existing = monthMap.get(key);
+      if (existing) {
+        existing.expense += entry.amount;
+      } else {
+        monthMap.set(key, {
+          month: toMonthLabel(entry.month),
+          income: 0,
+          expense: entry.amount,
+        });
+      }
+    }
+
+    return Array.from(monthMap.values());
+  }, [entries]);
+
+  function handleAddEntry(entry: BudgetEntry) {
+    setEntries((prev) => [entry, ...prev]);
+  }
 
   return (
     <div className="space-y-6">
-      {/* Page header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
           Student Budget Overview
@@ -81,9 +121,7 @@ useEffect(() => {
         </p>
       </div>
 
-      {/* Charts grid */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {/* 1. Spending breakdown */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -105,7 +143,6 @@ useEffect(() => {
           </CardContent>
         </Card>
 
-        {/* 2. Budget usage */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -125,7 +162,6 @@ useEffect(() => {
           </CardContent>
         </Card>
 
-        {/* 3. Income vs expense trend */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>
@@ -138,37 +174,10 @@ useEffect(() => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/*
-              TODO (Later):
-              - Grouped bar chart
-              - Mock data for last 3–6 months
-              - Income vs expense comparison
-            */}
-            <Placeholder>
-              <div className="space-y-2">
-                <p>
-                  This section will visualize how income and expenses change
-                  over time.
-                </p>
-
-                <ul className="list-disc pl-4">
-                  <li>
-                    Grouped bar chart comparing income vs expense per month
-                  </li>
-                  <li>Based on mock monthly cashflow data</li>
-                  <li>Showing the last 3–6 months for trend analysis</li>
-                </ul>
-
-                <p className="text-xs">
-                  The goal is to highlight spending patterns and budget
-                  stability over time, rather than individual transactions.
-                </p>
-              </div>
-            </Placeholder>
+            <IncomeExpenseBarChart data={incomeExpenseData} />
           </CardContent>
         </Card>
 
-        {/* 4. User input table */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>
@@ -184,18 +193,6 @@ useEffect(() => {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-}
-
-/* ---------------------------------------
-   Helper: placeholder block (draft demo)
----------------------------------------- */
-
-function Placeholder({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-xl border border-dashed border-border/60 bg-muted/20 p-4 text-sm text-muted-foreground">
-      {children}
     </div>
   );
 }

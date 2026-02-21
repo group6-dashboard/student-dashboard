@@ -1,10 +1,20 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { Badge, Button, Input, Textarea } from '@/components/ui/primitives';
+import { Badge, Button, Input, Select, Textarea } from '@/components/ui/primitives';
+import { mockBudgetData, type BudgetCategory } from '@/data/budget';
 import type { BudgetEntry } from '@/lib/budget/budgetStorage';
 
 type Errors = Partial<Record<'category' | 'amount' | 'month', string>>;
+
+const CATEGORY_OPTIONS: BudgetCategory[] = mockBudgetData.categoryExpenses.map(
+  (item) => item.category,
+);
+
+const MONTH_OPTIONS: string[] = Array.from(
+  new Set(mockBudgetData.monthlyCashflow.map((item) => item.month.trim())),
+);
+
 function formatEuro(value: number) {
   return new Intl.NumberFormat('en-FI', {
     style: 'currency',
@@ -32,8 +42,8 @@ export default function BudgetEntryForm({
 
   function validate(): Errors {
     const next: Errors = {};
-    if (!category.trim()) next.category = 'Please enter a category.';
-    if (!month.trim()) next.month = 'Please enter a month (e.g., Jan).';
+    if (!category.trim()) next.category = 'Please select a category.';
+    if (!month.trim()) next.month = 'Please select a month.';
 
     if (amount.trim().length === 0) next.amount = 'Please enter an amount.';
     else if (Number.isNaN(parsedAmount))
@@ -81,21 +91,27 @@ export default function BudgetEntryForm({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
             <label className="mb-1 block text-sm font-medium">Category</label>
-            <Input
+            <Select
               value={category}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setCategory(e.target.value)
               }
-              placeholder="e.g. Groceries"
               aria-invalid={Boolean(showError('category'))}
-            />
+            >
+              <option value="">Select category</option>
+              {CATEGORY_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
             {showError('category') ? (
               <p className="mt-1 text-xs text-rose-600">{errors.category}</p>
             ) : null}
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Amount (€)</label>
+            <label className="mb-1 block text-sm font-medium">Amount (EUR)</label>
             <Input
               type="number"
               inputMode="decimal"
@@ -113,14 +129,20 @@ export default function BudgetEntryForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium">Month</label>
-            <Input
+            <Select
               value={month}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setMonth(e.target.value)
               }
-              placeholder="e.g. Jan"
               aria-invalid={Boolean(showError('month'))}
-            />
+            >
+              <option value="">Select month</option>
+              {MONTH_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
             {showError('month') ? (
               <p className="mt-1 text-xs text-rose-600">{errors.month}</p>
             ) : null}
@@ -163,28 +185,28 @@ export default function BudgetEntryForm({
           <p className="text-sm text-muted-foreground">No entries added yet.</p>
         ) : (
           <ul className="space-y-2">
-            {entries.slice(0, 5).map((e) => (
+            {entries.slice(0, 5).map((entry) => (
               <li
-                key={e.id}
+                key={entry.id}
                 className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/50 bg-background/60 p-3"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">{e.category}</span>
-                  <span className="text-xs text-muted-foreground">•</span>
+                  <span className="text-sm font-medium">{entry.category}</span>
+                  <span className="text-xs text-muted-foreground">-</span>
                   <span className="text-xs text-muted-foreground">
-                    {e.month}
+                    {entry.month}
                   </span>
-                  {e.note ? (
+                  {entry.note ? (
                     <>
-                      <span className="text-xs text-muted-foreground">•</span>
+                      <span className="text-xs text-muted-foreground">-</span>
                       <span className="text-xs text-muted-foreground">
-                        {e.note}
+                        {entry.note}
                       </span>
                     </>
                   ) : null}
                 </div>
                 <span className="text-sm font-semibold">
-                  {formatEuro(e.amount)}
+                  {formatEuro(entry.amount)}
                 </span>
               </li>
             ))}
