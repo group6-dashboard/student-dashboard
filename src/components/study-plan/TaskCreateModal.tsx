@@ -19,7 +19,7 @@ import { useState } from "react";
 const TYPES: TaskType[] = [
   "Assignment",
   "Lecture",
-  "Lab",
+  "Project",
   "Exam Prep",
   "Other",
 ];
