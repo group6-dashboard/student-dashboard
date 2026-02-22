@@ -6,8 +6,6 @@ import type { PlanResult } from "@/lib/study-plan/types";
 import { formatRange } from "@/lib/study-plan/date";
 
 export default function WeeklyView({ result }: { result: PlanResult }) {
-  const weeklyCapacity = result.weeks[0]?.week.capacityHours;
-
   return (
     <div className="space-y-3">
       <Card>

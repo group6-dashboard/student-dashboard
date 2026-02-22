@@ -16,17 +16,17 @@ import { useState } from "react";
 const mockTasks: StudyTask[] = [
   {
     id: "mock-1",
-    title: "Task1",
+    title: "Software testing exam",
     type: "Exam Prep",
     startDate: "2026-01-29",
     endDate: "2026-02-17",
-    totalHours: 100,
-    maxHoursPerWeek: 25,
+    totalHours: 80,
+    maxHoursPerWeek: 20,
     availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
   },
   {
     id: "mock-2",
-    title: "task2",
+    title: "Entrepreneurship",
     type: "Assignment",
     startDate: "2026-01-29",
     endDate: "2026-03-29",
@@ -36,7 +36,7 @@ const mockTasks: StudyTask[] = [
   },
   {
     id: "mock-3",
-    title: "task3",
+    title: "Research and development",
     type: "Lecture",
     startDate: "2026-01-29",
     endDate: "2026-02-29",

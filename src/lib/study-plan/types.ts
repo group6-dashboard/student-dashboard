@@ -1,4 +1,9 @@
-export type TaskType = "Assignment" | "Lecture" | "Lab" | "Exam Prep" | "Other";
+export type TaskType =
+  | "Assignment"
+  | "Lecture"
+  | "Project"
+  | "Exam Prep"
+  | "Other";
 
 export type AvailabilityDay =
   | "Mon"
@@ -51,7 +56,6 @@ export type TaskStatus = {
   allocatedTotalHours: number;
   remainingHours: number;
   deadline: string;
-  risk: "OK" | "Deadline Risk";
 };
 
 export type PlanResult = {
@@ -62,8 +66,4 @@ export type PlanResult = {
     totalCapacity: number;
     totalAllocated: number;
   };
-  notices: Array<{
-    kind: "warning" | "danger";
-    message: string;
-  }>;
 };
